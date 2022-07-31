@@ -4,6 +4,7 @@ from transforchess.agent import (
     RandomAgent,
     StockfishAgent,
     BartAgent,
+    GPT2Agent
 )
 
 
@@ -19,6 +20,8 @@ if __name__ == '__main__':
         white = StockfishAgent()
     elif args.white == 'bart':
         white = BartAgent()
+    elif args.white == 'gpt2':
+        white = GPT2Agent()
     else:
         raise ValueError(f'Unknown white agent: {args.white}')
 
@@ -28,6 +31,8 @@ if __name__ == '__main__':
         black = StockfishAgent()
     elif args.black == 'bart':
         black = BartAgent()
+    elif args.black == 'gpt2':
+        black = GPT2Agent()
     else:
         raise ValueError(f'Unknown black agent: {args.black}')
 
