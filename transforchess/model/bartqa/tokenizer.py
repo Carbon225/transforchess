@@ -2,13 +2,29 @@ from random import choice
 from transformers import AutoTokenizer
 
 from transforchess.data import load_dataset
-from . import BASE_CHECKPOINT
-from .paths import TOKENIZED_DATASET
+from . import config
+
+
+def train_tokenizer():
+    dataset = load_dataset()
+
+    def get_corpus():
+        for start_idx in range(0, len(dataset), 1024):
+            samples = dataset[start_idx : start_idx + 1024]
+            yield samples['text']
+
+    tokenizer = AutoTokenizer.from_pretrained(config.BASE_CHECKPOINT)
+    
+    tokenizer = tokenizer.train_new_from_iterator(get_corpus(), tokenizer.vocab_size)
+
+    print(f'Vocab size: {tokenizer.vocab_size}')
+
+    tokenizer.save_pretrained(config.TOKENIZER)
 
 
 def tokenize_dataset():
     dataset = load_dataset()
-    tokenizer = AutoTokenizer.from_pretrained(BASE_CHECKPOINT)
+    tokenizer = AutoTokenizer.from_pretrained(config.TOKENIZER)
 
     def filter_won(element) -> bool:
         return element['label'] in ('1-0', '0-1')
@@ -75,4 +91,4 @@ def tokenize_dataset():
         num_proc=24,
     )
 
-    dataset.save_to_disk(TOKENIZED_DATASET)
+    dataset.save_to_disk(config.TOKENIZED_DATASET)

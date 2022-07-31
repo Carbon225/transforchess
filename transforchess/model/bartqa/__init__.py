@@ -1,4 +1,3 @@
-from .config import BASE_CHECKPOINT
-from . import paths
-from .tokenizer import tokenize_dataset
-from .trainer import train
+from . import config
+from .tokenizer import train_tokenizer, tokenize_dataset
+from .trainer import pretrain, train

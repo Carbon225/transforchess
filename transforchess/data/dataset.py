@@ -1,7 +1,5 @@
 import datasets
 
-from transforchess.paths import DATASET
-
 
 def load_dataset():
-    return datasets.load_dataset('csv', 'chess', data_files=[DATASET], split='train')
+    return datasets.load_dataset('carbon225/lichess-elite', split='train')

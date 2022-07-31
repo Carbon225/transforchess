@@ -1,1 +1,7 @@
 BASE_CHECKPOINT = 'facebook/bart-base'
+MODEL = 'models/bartqa/main'
+MODEL_PRETRAIN = 'models/bartqa/pretrain'
+TOKENIZER = 'models/bartqa/tokenizer'
+TOKENIZED_DATASET = 'data/bartqa/tokenized_dataset'
+RESULTS = 'results/bartqa/main'
+RESULTS_PRETRAIN = 'results/bartqa/pretrain'
