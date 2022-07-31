@@ -1,6 +1,6 @@
 import argparse
 
-from transforchess.model.gpt2clm import train
+from transforchess.model.bartqa import train
 
 
 if __name__ == '__main__':
