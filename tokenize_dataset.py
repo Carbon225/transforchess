@@ -1,4 +1,4 @@
-from transforchess.model.gpt2clm import tokenize_dataset
+from transforchess.model.bartqa import tokenize_dataset
 
 
 if __name__ == '__main__':
