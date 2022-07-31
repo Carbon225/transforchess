@@ -10,8 +10,11 @@ def tokenize_dataset():
     dataset = load_dataset()
     tokenizer = AutoTokenizer.from_pretrained(BASE_CHECKPOINT)
 
-    def filter_won(element):
+    def filter_won(element) -> bool:
         return element['label'] in ('1-0', '0-1')
+
+    def filter_long(element) -> bool:
+        return len(element['text'].split('.')) > 10
 
     def make_qa(element):
         game = element['text']
@@ -20,9 +23,9 @@ def tokenize_dataset():
         moves = [move.strip() for move in game.split('.')[:-1]]
 
         if winner == '1-0':
-            answer_index = choice(range(0, len(moves), 2))    
+            answer_index = choice(range(0, len(moves) - 1, 2))    
         else:
-            answer_index = choice(range(1, len(moves), 2))
+            answer_index = choice(range(1, len(moves) - 1, 2))
         
         element['question'] = ' ' + '. '.join(moves[:answer_index]) + '.'
         element['answer'] = ' ' + moves[answer_index] + '.'
@@ -46,6 +49,12 @@ def tokenize_dataset():
         num_proc=24,
     )
 
+    dataset = dataset.filter(
+        filter_long,
+        batched=False,
+        num_proc=24,
+    )
+
     dataset = dataset.map(
         make_qa,
         batched=False,
@@ -55,7 +64,7 @@ def tokenize_dataset():
 
     dataset = dataset.map(
         tokenize,
-        batched=False,
+        batched=True,
         num_proc=24,
         remove_columns=['question', 'answer'],
     )
