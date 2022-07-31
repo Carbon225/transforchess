@@ -3,10 +3,14 @@ import torch
 import chess
 import chess.engine
 import random
+import regex as re
 
 from transforchess.parser import san2human, human2san
-from transforchess.model.gpt2clm.paths import MODEL
+from transforchess.model.bartqa.paths import MODEL
 from transforchess.paths import STOCKFISH
+
+
+MODEL_MOVE_REGEX = re.compile(r'^ (?:White|Black) ([^.]+)\.$')
 
 
 class Game:
@@ -14,11 +18,10 @@ class Game:
         device = torch.device('cpu')
         
         self.task = pipeline(
-            'text-generation',
+            'text2text-generation',
             MODEL,
             device=device,
         )
-        self.task.model.config.pad_token_id = self.task.model.config.eos_token_id
 
         if white == 'stockfish':
             self.get_white_move = self.get_engine_move
@@ -49,17 +52,13 @@ class Game:
         return self.engine.play(self.board, chess.engine.Limit(time=0.001)).move
 
     def get_transformer_move(self) -> chess.Move:
-        sequences = self.task(self.game, max_new_tokens=10, num_return_sequences=10)
+        sequences = self.task(self.game, num_return_sequences=4)
 
         for sequence in sequences:
             try:
-                move_human = sequence['generated_text'][len(self.game):] \
-                    .split('.')[0] \
-                    .lower() \
-                    .strip() \
-                    .removeprefix('white') \
-                    .removeprefix('black') \
-                    .strip()
+                move_human = MODEL_MOVE_REGEX \
+                    .match(sequence['generated_text']) \
+                    .group(1)
                 move_san = human2san(move_human)
                 self.board.push_san(move_san)
                 move = self.board.pop()
