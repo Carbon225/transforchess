@@ -16,7 +16,7 @@ from . import config
 
 
 def pretrain(resume=False):
-    dataset = load_from_disk(config.TOKENIZED_DATASET).remove_columns(['labels'])
+    dataset = load_from_disk(config.DATASET_PRETRAIN)
 
     tokenizer = AutoTokenizer.from_pretrained(config.TOKENIZER)
 
@@ -58,7 +58,7 @@ def pretrain(resume=False):
 
 
 def train(resume=False):
-    dataset = load_from_disk(config.TOKENIZED_DATASET)
+    dataset = load_from_disk(config.DATASET_QA)
 
     tokenizer = AutoTokenizer.from_pretrained(config.TOKENIZER)
 

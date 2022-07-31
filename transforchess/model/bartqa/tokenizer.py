@@ -26,11 +26,15 @@ def tokenize_dataset():
     dataset = load_dataset()
     tokenizer = AutoTokenizer.from_pretrained(config.TOKENIZER)
 
-    def filter_won(element) -> bool:
-        return element['label'] in ('1-0', '0-1')
+    # common pipeline
 
     def filter_long(element) -> bool:
         return len(element['text'].split('.')) > 10
+
+    # QA pipeline
+
+    def filter_won(element) -> bool:
+        return element['label'] in ('1-0', '0-1')
 
     def make_qa(element):
         game = element['text']
@@ -48,7 +52,7 @@ def tokenize_dataset():
 
         return element
 
-    def tokenize(element):
+    def tokenize_qa(element):
         inputs = tokenizer(element['question'], truncation=False)
         with tokenizer.as_target_tokenizer():
             labels = tokenizer(element['answer'], truncation=False)
@@ -59,11 +63,16 @@ def tokenize_dataset():
         return len(element['input_ids']) <= tokenizer.model_max_length and \
                len(element['labels']) <= tokenizer.model_max_length
 
-    dataset = dataset.filter(
-        filter_won,
-        batched=False,
-        num_proc=24,
-    )
+    # pretrain pipeline
+
+    def prepend_space(element):
+        element['text'] = ' ' + element['text']
+        return element
+
+    def tokenize_pretrain(element):
+        return tokenizer(element['text'], truncation=True)
+
+    # common pipeline
 
     dataset = dataset.filter(
         filter_long,
@@ -71,24 +80,48 @@ def tokenize_dataset():
         num_proc=24,
     )
 
-    dataset = dataset.map(
+    # QA pipeline
+
+    dataset_qa = dataset.filter(
+        filter_won,
+        batched=False,
+        num_proc=24,
+    )
+
+    dataset_qa = dataset_qa.map(
         make_qa,
         batched=False,
         num_proc=24,
         remove_columns=['text', 'label'],
     )
 
-    dataset = dataset.map(
-        tokenize,
+    dataset_qa = dataset_qa.map(
+        tokenize_qa,
         batched=True,
         num_proc=24,
         remove_columns=['question', 'answer'],
     )
 
-    dataset = dataset.filter(
+    dataset_qa = dataset_qa.filter(
         filter_short,
         batched=False,
         num_proc=24,
     )
 
-    dataset.save_to_disk(config.TOKENIZED_DATASET)
+    # pretrain pipeline
+
+    dataset_pretrain = dataset.map(
+        prepend_space,
+        batched=False,
+        num_proc=24,
+    )
+
+    dataset_pretrain = dataset_pretrain.map(
+        tokenize_pretrain,
+        batched=True,
+        num_proc=24,
+        remove_columns=['text', 'label'],
+    )
+
+    dataset_qa.save_to_disk(config.DATASET_QA)
+    dataset_pretrain.save_to_disk(config.DATASET_PRETRAIN)
