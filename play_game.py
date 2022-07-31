@@ -1,5 +1,10 @@
 import argparse
 from transforchess.game import Game
+from transforchess.agent import (
+    RandomAgent,
+    StockfishAgent,
+    BartAgent,
+)
 
 
 if __name__ == '__main__':
@@ -8,7 +13,25 @@ if __name__ == '__main__':
     parser.add_argument('black', type=str)
     args = parser.parse_args()
 
-    game = Game(args.white, args.black)
+    if args.white == 'random':
+        white = RandomAgent()
+    elif args.white == 'stockfish':
+        white = StockfishAgent()
+    elif args.white == 'bart':
+        white = BartAgent()
+    else:
+        raise ValueError(f'Unknown white agent: {args.white}')
+
+    if args.black == 'random':
+        black = RandomAgent()
+    elif args.black == 'stockfish':
+        black = StockfishAgent()
+    elif args.black == 'bart':
+        black = BartAgent()
+    else:
+        raise ValueError(f'Unknown black agent: {args.black}')
+
+    game = Game(white, black)
 
     result = game.play()
     if result == '1-0':
