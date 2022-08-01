@@ -30,8 +30,8 @@ def pretrain(resume=False):
 
     args = TrainingArguments(
         output_dir=config.RESULTS_PRETRAIN,
-        per_device_train_batch_size=4,
-        gradient_accumulation_steps=8,
+        per_device_train_batch_size=2,
+        gradient_accumulation_steps=16,
         num_train_epochs=1,
         save_steps=100,
         logging_steps=10,
