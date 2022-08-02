@@ -14,6 +14,7 @@ class BartAgent:
         self.task = pipeline(
             'text2text-generation',
             'carbon225/transforchess-bart-base',
+            revision='original-tokenizer',
         )
 
         self.game = ''
@@ -35,13 +36,11 @@ class BartAgent:
                 move_san = human2san(move_human)
                 board.push_san(move_san)
                 move = board.pop()
-                if board.san(move) != move_san:
-                    raise ValueError('Move is not exact')
                 break
             except Exception as e:
                 print('Error:', e)
         else:
-            print('Error making move, choosing random...')
+            print('Choosing random move...')
             move = choice(list(board.legal_moves))
 
         player = 'White' if board.turn == WHITE else 'Black'

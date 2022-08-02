@@ -27,8 +27,6 @@ class GPT2Agent:
                 .split()[0]
             board.push_san(move_san)
             move = board.pop()
-            if board.san(move) != move_san:
-                raise ValueError(f'Move is not exact: {move_san}')
         except Exception as e:
             print('Error:', e)
             print('Choosing random move...')
