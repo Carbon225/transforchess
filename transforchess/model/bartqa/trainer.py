@@ -87,14 +87,15 @@ def train(resume=False):
 
     args = Seq2SeqTrainingArguments(
         output_dir=config.RESULTS,
+        fp16=True,
         per_device_train_batch_size=4,
-        gradient_accumulation_steps=8,
         num_train_epochs=1,
         save_steps=100,
+        save_total_limit=5,
         logging_steps=10,
-        learning_rate=2e-5,
-        weight_decay=0.01,
-        fp16=True,
+        gradient_accumulation_steps=16,
+        learning_rate=9.117e-5,
+        weight_decay=0.00037,
     )
 
     trainer = Seq2SeqTrainerWithGameLengthMetric(
