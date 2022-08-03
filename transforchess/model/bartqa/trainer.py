@@ -20,7 +20,7 @@ from .metrics import GameLength
 def pretrain(resume=False):
     dataset = load_from_disk(config.DATASET_PRETRAIN)
 
-    tokenizer = AutoTokenizer.from_pretrained(config.TOKENIZER)
+    tokenizer = AutoTokenizer.from_pretrained(config.MODEL_CHECKPOINT)
 
     model_config = AutoConfig.from_pretrained(
         config.BASE_CHECKPOINT,
@@ -55,7 +55,7 @@ def pretrain(resume=False):
     except KeyboardInterrupt:
         print('Stopping...')
     finally:
-        trainer.save_model(config.MODEL_PRETRAIN)
+        trainer.save_model(config.MODEL_PRETRAIN_PATH)
         print('Saved model')
 
 
@@ -79,9 +79,9 @@ class Seq2SeqTrainerWithGameLengthMetric(Seq2SeqTrainer):
 def train(resume=False):
     dataset = load_from_disk(config.DATASET_QA)
 
-    tokenizer = AutoTokenizer.from_pretrained(config.TOKENIZER)
+    tokenizer = AutoTokenizer.from_pretrained(config.MODEL_CHECKPOINT)
 
-    model = AutoModelForSeq2SeqLM.from_pretrained(config.MODEL_PRETRAIN)
+    model = AutoModelForSeq2SeqLM.from_pretrained(config.MODEL_CHECKPOINT, revision='pretrain')
 
     data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model)
 
@@ -111,5 +111,5 @@ def train(resume=False):
     except KeyboardInterrupt:
         print('Stopping...')
     finally:
-        trainer.save_model(config.MODEL)
+        trainer.save_model(config.MODEL_PATH)
         print('Saved model')
