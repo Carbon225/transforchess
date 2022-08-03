@@ -60,7 +60,7 @@ def pretrain(resume=False):
 
 
 class Seq2SeqTrainerWithGameLengthMetric(Seq2SeqTrainer):
-    def __init__(self, *args, game_length_metric = 'median', game_length_metric_n=10, **kwargs):
+    def __init__(self, *args, game_length_metric='median', game_length_metric_n=30, **kwargs):
         super().__init__(*args, **kwargs)
         self.game_length_metric = GameLength(game_length_metric, game_length_metric_n)
 
@@ -87,12 +87,19 @@ def train(resume=False):
 
     args = Seq2SeqTrainingArguments(
         output_dir=config.RESULTS,
+        optim='adamw_torch',
         fp16=True,
         per_device_train_batch_size=4,
         num_train_epochs=1,
+        
+        save_strategy='steps',
         save_steps=100,
         save_total_limit=5,
+        logging_strategy='steps',
         logging_steps=10,
+        evaluation_strategy='steps',
+        eval_steps=100,
+        
         gradient_accumulation_steps=16,
         learning_rate=9.117e-5,
         weight_decay=0.00037,
