@@ -1,3 +1,4 @@
+from time import time as get_time
 from datasets import load_from_disk
 from transformers import (
     AutoTokenizer,
@@ -13,6 +14,7 @@ from transformers import (
 )
 
 from . import config
+from .metrics import GameLength
 
 
 def pretrain(resume=False):
@@ -57,6 +59,23 @@ def pretrain(resume=False):
         print('Saved model')
 
 
+class Seq2SeqTrainerWithGameLengthMetric(Seq2SeqTrainer):
+    def __init__(self, *args, game_length_metric = 'median', game_length_metric_n=10, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.game_length_metric = GameLength(game_length_metric, game_length_metric_n)
+
+    def evaluate(self, *args, **kwargs):
+        print('Running evaluation...')
+        start = get_time()
+        metrics =  {
+            'eval_game_length': self.game_length_metric(self.model, self.tokenizer),
+        }
+        runtime = get_time() - start
+        metrics['eval_runtime'] = runtime
+        print(metrics)
+        return metrics
+
+
 def train(resume=False):
     dataset = load_from_disk(config.DATASET_QA)
 
@@ -78,7 +97,7 @@ def train(resume=False):
         fp16=True,
     )
 
-    trainer = Seq2SeqTrainer(
+    trainer = Seq2SeqTrainerWithGameLengthMetric(
         model=model,
         tokenizer=tokenizer,
         args=args,
