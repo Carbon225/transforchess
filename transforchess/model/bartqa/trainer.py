@@ -68,7 +68,7 @@ class Seq2SeqTrainerWithGameLengthMetric(Seq2SeqTrainer):
         print('Running evaluation...')
         start = get_time()
         metrics =  {
-            'eval_game_length': self.game_length_metric(self.model, self.tokenizer),
+            'eval_game_length': self.game_length_metric(self.model, self.tokenizer, self.args.device),
         }
         runtime = get_time() - start
         metrics['eval_runtime'] = runtime

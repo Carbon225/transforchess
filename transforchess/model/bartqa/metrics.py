@@ -14,8 +14,13 @@ class GameLength:
             'mean': np.mean,
         }[method]
 
-    def __call__(self, model, tokenizer) -> float:
-        task = pipeline('text2text-generation', model=model, tokenizer=tokenizer)
+    def __call__(self, model, tokenizer, device) -> float:
+        task = pipeline(
+            'text2text-generation',
+            model=model,
+            tokenizer=tokenizer,
+            device=device,
+        )
 
         boards = [Board() for _ in range(self.n_games)]
         games = ['' for _ in range(self.n_games)]
