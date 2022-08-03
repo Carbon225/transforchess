@@ -8,6 +8,16 @@ from . import config
 def train_tokenizer():
     dataset = load_dataset()
 
+    def prepend_space(element):
+        element['text'] = ' ' + element['text']
+        return element
+
+    dataset = dataset.map(
+        prepend_space,
+        batched=False,
+        num_proc=24,
+    )
+
     def get_corpus():
         for start_idx in range(0, len(dataset), 1024):
             samples = dataset[start_idx : start_idx + 1024]
@@ -49,6 +59,9 @@ def tokenize_dataset():
         
         element['question'] = ' ' + '. '.join(moves[:answer_index]) + '.'
         element['answer'] = ' ' + moves[answer_index] + '.'
+
+        if element['question'] == '.':
+            element['question'] = ''
 
         return element
 
