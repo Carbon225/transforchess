@@ -29,12 +29,12 @@ def train_tokenizer():
 
     print(f'Vocab size: {tokenizer.vocab_size}')
 
-    tokenizer.save_pretrained(config.TOKENIZER)
+    tokenizer.save_pretrained(config.TOKENIZER_PATH)
 
 
 def tokenize_dataset():
     dataset = load_dataset()
-    tokenizer = AutoTokenizer.from_pretrained(config.TOKENIZER)
+    tokenizer = AutoTokenizer.from_pretrained(config.MODEL_CHECKPOINT)
 
     # common pipeline
 
