@@ -4,17 +4,17 @@ import regex as re
 from random import choice
 
 from transforchess.parser import san2human, human2san
+from transforchess.model.config import MODEL_CHECKPOINT
 
 
 MODEL_MOVE_REGEX = re.compile(r'^ (?:White|Black) ([^.]+)\.$')
 
 
-class BartAgent:
+class Text2TextAgent:
     def __init__(self):
         self.task = pipeline(
             'text2text-generation',
-            'carbon225/transforchess-bart-base',
-            revision='original-tokenizer',
+            MODEL_CHECKPOINT,
         )
 
         self.game = ''

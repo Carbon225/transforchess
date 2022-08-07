@@ -1,6 +1,6 @@
 import argparse
 
-from transforchess.model.bartqa import train
+from transforchess.model import pretrain
 
 
 if __name__ == '__main__':
@@ -8,4 +8,4 @@ if __name__ == '__main__':
     parser.add_argument('--resume', action='store_true')
     args = parser.parse_args()
 
-    train(args.resume)
+    pretrain(args.resume)

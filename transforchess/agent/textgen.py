@@ -3,7 +3,7 @@ from random import choice
 from chess import Board
 
 
-class GPT2Agent:
+class TextGenAgent:
     def __init__(self):
         self.task = pipeline(
             'text-generation',

@@ -34,7 +34,7 @@ def train_tokenizer():
 
 def tokenize_dataset():
     dataset = load_dataset()
-    tokenizer = AutoTokenizer.from_pretrained(config.MODEL_CHECKPOINT)
+    tokenizer = AutoTokenizer.from_pretrained(config.MODEL_CHECKPOINT, revision='dev')
 
     # common pipeline
 
@@ -136,5 +136,5 @@ def tokenize_dataset():
         remove_columns=['text', 'label'],
     )
 
-    dataset_qa.save_to_disk(config.DATASET_QA)
+    dataset_qa.save_to_disk(config.DATASET_MAIN)
     dataset_pretrain.save_to_disk(config.DATASET_PRETRAIN)

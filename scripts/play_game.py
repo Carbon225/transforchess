@@ -3,8 +3,8 @@ from transforchess.game import Game
 from transforchess.agent import (
     RandomAgent,
     StockfishAgent,
-    BartAgent,
-    GPT2Agent,
+    Text2TextAgent,
+    TextGenAgent,
     HumanAgent,
 )
 
@@ -18,8 +18,8 @@ if __name__ == '__main__':
     agents = {
         'random': RandomAgent,
         'stockfish': StockfishAgent,
-        'bart': BartAgent,
-        'gpt2': GPT2Agent,
+        'bart': Text2TextAgent,
+        'gpt2': TextGenAgent,
         'human': HumanAgent,
     }
     
